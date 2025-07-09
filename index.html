@@ -63,7 +63,7 @@
         .nav-arrow.next { right: 10px; }
         .nav-arrow.hidden { display: none; }
         
-        /* ストーリーズのプログレスバー */
+        /* プログレスバー */
         .progress-bar-container {
             position: absolute;
             top: 8px;
@@ -81,14 +81,32 @@
         .progress-segment.active {
             background-color: white;
         }
+
+        /* グリッド内のカルーセルアイコン */
+        .grid-ad-slot .carousel-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: white;
+            font-size: 16px;
+            text-shadow: 0 0 4px rgba(0,0,0,0.7);
+        }
+        
+        /* スクロールバーを非表示にしつつ、スクロールは可能にする */
+        .preview-scroll::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        .preview-scroll {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <div class="container mx-auto p-4 sm:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Instagram広告プレビューツール</h1>
-            <p class="text-gray-600 mt-2">アップロードしたバナーが、Instagram上でどのように表示されるかを確認できます。</p>
+        <header class="text-center mb-8 p-6 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 shadow-lg">
+            <h1 class="text-3xl font-bold text-white">Instagram広告プレビューツール</h1>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -100,9 +118,12 @@
                     <!-- 配置面 -->
                     <div>
                         <label class="font-semibold text-gray-700">配置面</label>
-                        <div id="placement-selector" class="flex items-center gap-4 mt-2">
-                            <button data-placement="feed" class="placement-btn bg-blue-500 text-white flex-1 py-2 rounded-lg transition-all duration-300">フィード</button>
-                            <button data-placement="stories" class="placement-btn bg-gray-200 text-gray-700 flex-1 py-2 rounded-lg transition-all duration-300">ストーリーズ</button>
+                        <div id="placement-selector" class="flex flex-wrap gap-2 mt-2">
+                            <button data-placement="feed" class="placement-btn flex-grow bg-blue-500 text-white py-2 px-3 rounded-lg transition-all duration-300 text-sm">フィード</button>
+                            <button data-placement="stories" class="placement-btn flex-grow bg-gray-200 text-gray-700 py-2 px-3 rounded-lg transition-all duration-300 text-sm">ストーリーズ</button>
+                            <button data-placement="reels" class="placement-btn flex-grow bg-gray-200 text-gray-700 py-2 px-3 rounded-lg transition-all duration-300 text-sm">リール</button>
+                            <button data-placement="explore" class="placement-btn flex-grow bg-gray-200 text-gray-700 py-2 px-3 rounded-lg transition-all duration-300 text-sm">発見ホーム</button>
+                            <button data-placement="search" class="placement-btn flex-grow bg-gray-200 text-gray-700 py-2 px-3 rounded-lg transition-all duration-300 text-sm">検索結果</button>
                         </div>
                     </div>
 
@@ -125,23 +146,21 @@
                     <!-- 広告キャプション -->
                     <div id="caption-section">
                         <label for="caption-input" class="font-semibold text-gray-700">広告キャプション</label>
-                        <textarea id="caption-input" rows="4" class="w-full mt-2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">ここに広告のキャプションや説明文を入力します。ハッシュタグなども利用可能です。 #広告 #プロモーション</textarea>
+                        <textarea id="caption-input" rows="4" class="w-full mt-2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition" placeholder="ここに広告のキャプションや説明文を入力します..."></textarea>
                     </div>
                     
-                    <!-- アスペクト比 (フィード専用) -->
-                    <div id="aspect-ratio-section">
-                        <label class="font-semibold text-gray-700">アスペクト比</label>
-                        <div id="aspect-ratio-selector" class="flex items-center gap-4 mt-2">
-                            <button data-ratio="1/1" class="aspect-ratio-btn bg-blue-500 text-white flex-1 py-2 rounded-lg transition-all duration-300 text-sm">1:1 (スクエア)</button>
-                            <button data-ratio="4/5" class="aspect-ratio-btn bg-gray-200 text-gray-700 flex-1 py-2 rounded-lg transition-all duration-300 text-sm">4:5 (縦長)</button>
-                        </div>
+                    <!-- バナー画像 (1:1, 4:5) -->
+                    <div class="border-t pt-4">
+                        <label for="banner-upload-square" class="font-semibold text-gray-700">フィード・発見・検索用 (1:1, 4:5)</label>
+                        <input type="file" id="banner-upload-square" multiple class="w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition cursor-pointer">
+                        <p id="file-info-square" class="text-xs text-gray-500 mt-1">1枚の場合は静止画、複数枚選択でカルーセルになります。</p>
                     </div>
 
-                    <!-- バナー画像 -->
-                    <div>
-                        <label for="banner-upload" class="font-semibold text-gray-700">広告バナー</label>
-                        <input type="file" id="banner-upload" multiple class="w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition cursor-pointer">
-                        <p id="file-info" class="text-xs text-gray-500 mt-1">1枚の場合は静止画、複数枚選択でカルーセルになります。</p>
+                    <!-- バナー画像 (9:16) -->
+                    <div class="border-t pt-4">
+                        <label for="banner-upload-vertical" class="font-semibold text-gray-700">ストーリーズ・リール用 (9:16)</label>
+                        <input type="file" id="banner-upload-vertical" multiple class="w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition cursor-pointer">
+                        <p id="file-info-vertical" class="text-xs text-gray-500 mt-1">1枚の場合は静止画、複数枚選択でカルーセルになります。</p>
                     </div>
                 </div>
             </div>
@@ -151,80 +170,13 @@
                 <div class="w-full max-w-[375px] bg-black rounded-[40px] shadow-2xl p-3">
                     <div class="w-full h-[667px] bg-white rounded-[30px] overflow-hidden relative">
                         
-                        <!-- フィードプレビュー -->
-                        <div id="feed-preview" class="h-full overflow-y-auto">
-                            <!-- Instagram UI Header -->
-                            <div class="flex justify-between items-center p-3 bg-gray-50 border-b">
-                                <i class="fa-solid fa-camera text-xl"></i>
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/1200px-Instagram_logo.svg.png" class="h-7" alt="Instagram Logo">
-                                <i class="fa-regular fa-paper-plane text-xl"></i>
-                            </div>
-
-                            <!-- Ad Post -->
-                            <div class="bg-white">
-                                <!-- Post Header -->
-                                <div class="flex items-center p-3">
-                                    <img id="feed-profile-pic" src="https://placehold.co/40x40/EFEFEF/333333?text=User" class="w-9 h-9 rounded-full object-cover">
-                                    <div class="ml-3">
-                                        <p id="feed-username" class="font-bold text-sm">cms</p>
-                                        <p class="text-xs text-gray-500">スポンサー</p>
-                                    </div>
-                                    <i class="fa-solid fa-ellipsis ml-auto text-gray-600"></i>
-                                </div>
-                                <!-- Media -->
-                                <div id="feed-media-wrapper" class="media-wrapper relative w-full bg-gray-200 transition-all duration-300" style="aspect-ratio: 1 / 1;">
-                                    <!-- Banner images will be injected here -->
-                                    <div class="w-full h-full flex justify-center items-center">
-                                        <p class="text-gray-500">バナーをアップロード</p>
-                                    </div>
-                                </div>
-                                <!-- Actions -->
-                                <div class="p-3">
-                                    <div class="flex items-center text-2xl gap-4">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <i class="fa-regular fa-comment"></i>
-                                        <i class="fa-regular fa-paper-plane"></i>
-                                        <i class="fa-regular fa-bookmark ml-auto"></i>
-                                    </div>
-                                    <p class="text-sm mt-2">「いいね！」1,234件</p>
-                                    <p id="feed-caption" class="text-sm mt-2"><strong id="feed-caption-username" class="font-bold">cms</strong> <span>ここに広告のキャプションや説明文を入力します...</span></p>
-                                    <p class="text-xs text-gray-400 mt-2">さらに表示</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ストーリーズプレビュー -->
-                        <div id="stories-preview" class="hidden h-full bg-black relative">
-                            <div id="stories-media-wrapper" class="media-wrapper h-full relative">
-                                <!-- Banner images will be injected here -->
-                                <div class="w-full h-full flex justify-center items-center">
-                                    <p class="text-white">バナーをアップロード</p>
-                                </div>
-                            </div>
-                             <!-- Stories UI Header -->
-                            <div class="absolute top-0 left-0 right-0 p-3 pt-5 bg-gradient-to-b from-black/50 to-transparent">
-                                <div id="stories-progress-bar" class="progress-bar-container"></div>
-                                <div class="flex items-center mt-3">
-                                    <img id="stories-profile-pic" src="https://placehold.co/40x40/EFEFEF/333333?text=User" class="w-10 h-10 rounded-full object-cover">
-                                    <div class="ml-3">
-                                        <p class="flex items-center gap-2">
-                                            <span id="stories-username" class="text-white font-bold text-sm">cms</span>
-                                            <span class="text-gray-300 text-sm">12時間</span>
-                                        </p>
-                                        <p class="text-xs text-gray-300">スポンサー</p>
-                                    </div>
-                                    <div class="ml-auto flex items-center gap-4">
-                                        <i class="fa-solid fa-ellipsis text-white"></i>
-                                        <i class="fa-solid fa-xmark text-white text-xl"></i>
-                                    </div>
-                                </div>
-                            </div>
-                             <!-- Stories UI Footer -->
-                            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent">
-                                <div class="w-full bg-white/90 text-black text-center py-3 rounded-lg font-bold">詳しくはこちら</div>
-                            </div>
-                        </div>
-
+                        <!-- 各プレビューコンテナ -->
+                        <div id="feed-preview" class="h-full overflow-y-auto preview-scroll">...</div>
+                        <div id="stories-preview" class="hidden h-full bg-black relative">...</div>
+                        <div id="reels-preview" class="hidden h-full bg-black relative">...</div>
+                        <div id="explore-preview" class="hidden h-full overflow-y-auto preview-scroll">...</div>
+                        <div id="search-preview" class="hidden h-full overflow-y-auto preview-scroll">...</div>
+                        
                     </div>
                 </div>
             </div>
@@ -232,143 +184,278 @@
     </div>
 
 <script>
+// プレビュー用のHTMLコンテンツをテンプレートとして定義
+const previewTemplates = {
+    feed: `
+        <!-- Instagram UI Header -->
+        <div class="flex justify-between items-center p-3 bg-gray-50 border-b sticky top-0 z-10">
+            <i class="fa-solid fa-camera text-xl"></i>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/1200px-Instagram_logo.svg.png" class="h-7" alt="Instagram Logo">
+            <i class="fa-regular fa-paper-plane text-xl"></i>
+        </div>
+        <!-- Ad Post -->
+        <div class="bg-white">
+            <div class="flex items-center p-3">
+                <img id="feed-profile-pic" src="https://placehold.co/40x40/EFEFEF/333333?text=User" class="w-9 h-9 rounded-full object-cover">
+                <div class="ml-3">
+                    <p id="feed-username" class="font-bold text-sm">cms</p>
+                    <p class="text-xs text-gray-500">スポンサー</p>
+                </div>
+                <i class="fa-solid fa-ellipsis ml-auto text-gray-600"></i>
+            </div>
+            <div id="feed-media-wrapper" class="media-wrapper relative w-full bg-gray-200 transition-[aspect-ratio] duration-300" style="aspect-ratio: 1 / 1;">
+                <div class="w-full h-full flex justify-center items-center"><p class="text-gray-500">バナーをアップロード</p></div>
+            </div>
+            <div class="p-3">
+                <div class="flex items-center text-2xl gap-4">
+                    <i class="fa-regular fa-heart"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i><i class="fa-regular fa-bookmark ml-auto"></i>
+                </div>
+                <p class="text-sm mt-2">「いいね！」1,234件</p>
+                <p id="feed-caption" class="text-sm mt-2"><strong id="feed-caption-username" class="font-bold">cms</strong> <span></span></p>
+                <p class="text-xs text-gray-400 mt-2">さらに表示</p>
+            </div>
+        </div>`,
+    stories: `
+        <div id="stories-media-wrapper" class="media-wrapper h-full relative">
+            <div class="w-full h-full flex justify-center items-center"><p class="text-white">バナーをアップロード</p></div>
+        </div>
+        <div class="absolute top-0 left-0 right-0 p-3 pt-5 bg-gradient-to-b from-black/50 to-transparent">
+            <div id="stories-progress-bar" class="progress-bar-container"></div>
+            <div class="flex items-center mt-3">
+                <img id="stories-profile-pic" src="https://placehold.co/40x40/EFEFEF/333333?text=User" class="w-10 h-10 rounded-full object-cover">
+                <div class="ml-3">
+                    <p class="flex items-center gap-2"><span id="stories-username" class="text-white font-bold text-sm">cms</span><span class="text-gray-300 text-sm">12時間</span></p>
+                    <p class="text-xs text-gray-300">スポンサー</p>
+                </div>
+                <div class="ml-auto flex items-center gap-4"><i class="fa-solid fa-ellipsis text-white"></i><i class="fa-solid fa-xmark text-white text-xl"></i></div>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 p-4 flex justify-center">
+            <div class="bg-white text-black text-center py-3 px-6 rounded-full font-bold flex items-center gap-2 shadow-lg">
+                <i class="fa-solid fa-link"></i>
+                <span>詳しくはこちら</span>
+            </div>
+        </div>`,
+    reels: `
+        <div id="reels-media-wrapper" class="media-wrapper h-full relative">
+            <div class="w-full h-full flex justify-center items-center"><p class="text-white">バナーをアップロード</p></div>
+        </div>
+        <div id="reels-progress-bar" class="progress-bar-container"></div>
+        <!-- Right Side Icons -->
+        <div class="absolute bottom-28 right-2 flex flex-col items-center gap-5 text-white text-2xl z-10">
+            <div class="text-center"><i class="fa-solid fa-heart"></i><p class="text-xs font-semibold">1.2万</p></div>
+            <div class="text-center"><i class="fa-solid fa-comment-dots"></i><p class="text-xs font-semibold">345</p></div>
+            <div class="text-center"><i class="fa-solid fa-paper-plane"></i><p class="text-xs font-semibold">678</p></div>
+            <i class="fa-solid fa-ellipsis"></i>
+        </div>
+        <!-- Bottom Info & CTA -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 text-white bg-gradient-to-t from-black/60 to-transparent z-10">
+            <div class="flex items-center gap-3 mb-2">
+                <img id="reels-profile-pic" src="https://placehold.co/40x40/EFEFEF/333333?text=User" class="w-10 h-10 rounded-full object-cover border-2 border-white">
+                <p id="reels-username" class="font-bold text-sm">cms</p>
+                <button class="border border-white rounded px-3 py-0.5 text-sm font-semibold">フォローする</button>
+            </div>
+            <p class="text-sm reels-caption-text mb-3"></p>
+            <div class="flex items-center justify-between w-full bg-white/90 text-black text-center py-2.5 px-4 rounded-lg font-bold text-sm">
+                <span>詳しくはこちら</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <p class="text-xs text-gray-300 mt-2"><i class="fa-solid fa-rectangle-ad mr-1"></i>広告</p>
+        </div>`,
+    explore: `
+        <div class="p-2 sticky top-0 bg-white z-10 border-b">
+            <div class="bg-gray-100 rounded-lg p-2 flex items-center">
+                <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
+                <span class="ml-2 text-gray-500">検索</span>
+            </div>
+        </div>
+        <div class="p-0.5">
+            <div class="grid grid-cols-3 gap-0.5">
+                <img src="https://placehold.co/200x200/8B5CF6/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <img src="https://placehold.co/200x200/EC4899/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <img src="https://placehold.co/200x200/F59E0B/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <img src="https://placehold.co/200x200/10B981/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <div id="explore-ad-slot" class="grid-ad-slot aspect-square bg-gray-300 relative"><div class="w-full h-full flex justify-center items-center"><p class="text-gray-500 text-xs text-center">広告<br>スロット</p></div></div>
+                <img src="https://placehold.co/200x200/3B82F6/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <img src="https://placehold.co/200x200/EF4444/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <img src="https://placehold.co/200x200/6366F1/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+                <img src="https://placehold.co/200x200/84CC16/FFFFFF?text=" class="aspect-square object-cover w-full h-full">
+            </div>
+        </div>`,
+    search: `
+        <div class="p-2 sticky top-0 bg-white z-10 border-b">
+            <div class="bg-gray-100 rounded-lg p-2 flex items-center">
+                <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
+                <span class="ml-2 text-gray-500">検索</span>
+            </div>
+        </div>
+        <div class="p-0.5">
+            <div class="grid grid-cols-3 gap-0.5">
+                <img src="https://placehold.co/200x250/3B82F6/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <img src="https://placehold.co/200x250/EF4444/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <img src="https://placehold.co/200x250/10B981/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <img src="https://placehold.co/200x250/F59E0B/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <div id="search-ad-slot" class="grid-ad-slot bg-gray-300 relative" style="aspect-ratio: 4 / 5;"><div class="w-full h-full flex justify-center items-center"><p class="text-gray-500 text-xs text-center">広告<br>スロット</p></div></div>
+                <img src="https://placehold.co/200x250/8B5CF6/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <img src="https://placehold.co/200x250/EC4899/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <img src="https://placehold.co/200x250/D946EF/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+                <img src="https://placehold.co/200x250/14B8A6/FFFFFF?text=" style="aspect-ratio: 4 / 5;" class="object-cover w-full h-full">
+            </div>
+        </div>`
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // ===== DOM Elements =====
     const placementSelector = document.getElementById('placement-selector');
-    const feedPreview = document.getElementById('feed-preview');
-    const storiesPreview = document.getElementById('stories-preview');
     const captionSection = document.getElementById('caption-section');
-    const aspectRatioSection = document.getElementById('aspect-ratio-section');
-    const aspectRatioSelector = document.getElementById('aspect-ratio-selector');
-
     const profilePicUpload = document.getElementById('profile-pic-upload');
     const profilePicPreview = document.getElementById('profile-pic-preview');
-    const feedProfilePic = document.getElementById('feed-profile-pic');
-    const storiesProfilePic = document.getElementById('stories-profile-pic');
-
     const usernameInput = document.getElementById('username-input');
-    const feedUsername = document.getElementById('feed-username');
-    const storiesUsername = document.getElementById('stories-username');
-    const feedCaptionUsername = document.getElementById('feed-caption-username');
-
     const captionInput = document.getElementById('caption-input');
-    const feedCaption = document.getElementById('feed-caption');
-
-    const bannerUpload = document.getElementById('banner-upload');
-    const fileInfo = document.getElementById('file-info');
-    const feedMediaWrapper = document.getElementById('feed-media-wrapper');
-    const storiesMediaWrapper = document.getElementById('stories-media-wrapper');
-    const storiesProgressBar = document.getElementById('stories-progress-bar');
     
+    const bannerUploadSquare = document.getElementById('banner-upload-square');
+    const fileInfoSquare = document.getElementById('file-info-square');
+    const bannerUploadVertical = document.getElementById('banner-upload-vertical');
+    const fileInfoVertical = document.getElementById('file-info-vertical');
+
+    // Preview Containers
+    const previewContainers = {
+        feed: document.getElementById('feed-preview'),
+        stories: document.getElementById('stories-preview'),
+        reels: document.getElementById('reels-preview'),
+        explore: document.getElementById('explore-preview'),
+        search: document.getElementById('search-preview'),
+    };
+
     let currentPlacement = 'feed';
     let carouselState = {
         feed: { index: 0, count: 0 },
-        stories: { index: 0, count: 0 }
+        stories: { index: 0, count: 0 },
+        reels: { index: 0, count: 0 }
     };
 
+    // ===== Initialization =====
+    function initializePreviews() {
+        for (const key in previewTemplates) {
+            if (previewContainers[key]) {
+                previewContainers[key].innerHTML = previewTemplates[key];
+            }
+        }
+        updatePlacementView();
+    }
+    
     // ===== Event Listeners =====
-
-    // Placement Selector
     placementSelector.addEventListener('click', (e) => {
         if (e.target.classList.contains('placement-btn')) {
-            const selectedPlacement = e.target.dataset.placement;
-            if (selectedPlacement === currentPlacement) return;
-            
-            currentPlacement = selectedPlacement;
+            currentPlacement = e.target.dataset.placement;
             updatePlacementView();
         }
     });
 
-    // Aspect Ratio Selector
-    aspectRatioSelector.addEventListener('click', (e) => {
-        if (e.target.classList.contains('aspect-ratio-btn')) {
-            const selectedRatio = e.target.dataset.ratio;
-            feedMediaWrapper.style.aspectRatio = selectedRatio.replace('/', ' / ');
-
-            const buttons = aspectRatioSelector.querySelectorAll('.aspect-ratio-btn');
-            buttons.forEach(btn => {
-                if (btn.dataset.ratio === selectedRatio) {
-                    btn.classList.remove('bg-gray-200', 'text-gray-700');
-                    btn.classList.add('bg-blue-500', 'text-white');
-                } else {
-                    btn.classList.remove('bg-blue-500', 'text-white');
-                    btn.classList.add('bg-gray-200', 'text-gray-700');
-                }
-            });
-        }
-    });
-
-    // Profile Picture
     profilePicUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const imageUrl = event.target.result;
-                profilePicPreview.src = imageUrl;
-                feedProfilePic.src = imageUrl;
-                storiesProfilePic.src = imageUrl;
-            };
+            reader.onload = (event) => updateProfilePics(event.target.result);
             reader.readAsDataURL(file);
         }
     });
 
-    // Username
-    usernameInput.addEventListener('input', (e) => {
-        const newUsername = e.target.value || 'cms';
-        feedUsername.textContent = newUsername;
-        storiesUsername.textContent = newUsername;
-        feedCaptionUsername.textContent = newUsername;
-    });
+    usernameInput.addEventListener('input', (e) => updateUsername(e.target.value));
+    captionInput.addEventListener('input', (e) => updateCaption(e.target.value));
 
-    // Caption
-    captionInput.addEventListener('input', (e) => {
-        const newCaption = e.target.value.replace(/\n/g, '<br>');
-        feedCaption.innerHTML = `<strong class="font-bold">${usernameInput.value}</strong> <span>${newCaption || '...'}</span>`;
-    });
-
-    // Banner Upload
-    bannerUpload.addEventListener('change', (e) => {
+    bannerUploadSquare.addEventListener('change', (e) => {
         const files = e.target.files;
-        fileInfo.textContent = `${files.length}個のファイルが選択されました。`;
-        
-        carouselState.feed = { index: 0, count: files.length };
-        carouselState.stories = { index: 0, count: files.length };
-        
-        createMediaPreview(files, feedMediaWrapper, 'feed');
-        createMediaPreview(files, storiesMediaWrapper, 'stories');
-        createStoriesProgressBar(files.length);
+        fileInfoSquare.textContent = `${files.length}個のファイルが選択されました。`;
+
+        if (files.length > 0) {
+            const firstFile = files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const w = img.naturalWidth;
+                    const h = img.naturalHeight;
+                    const ratio = w / h;
+                    const feedMediaWrapper = document.getElementById('feed-media-wrapper');
+                    
+                    // 1:1と4:5の中間値(0.9)を基準に判定
+                    if (ratio >= 0.9) {
+                        feedMediaWrapper.style.aspectRatio = '1 / 1';
+                    } else {
+                        feedMediaWrapper.style.aspectRatio = '4 / 5';
+                    }
+                    
+                    carouselState.feed = { index: 0, count: files.length };
+                    createMediaPreview(files, 'feed');
+                    updateGridPreviews(files);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(firstFile);
+        } else {
+            // Reset if no files selected
+            const feedMediaWrapper = document.getElementById('feed-media-wrapper');
+            feedMediaWrapper.style.aspectRatio = '1 / 1';
+            createMediaPreview(files, 'feed');
+            updateGridPreviews(files);
+        }
     });
 
-    // ===== Functions =====
+    bannerUploadVertical.addEventListener('change', (e) => {
+        const files = e.target.files;
+        fileInfoVertical.textContent = `${files.length}個のファイルが選択されました。`;
+        carouselState.stories = { index: 0, count: files.length };
+        carouselState.reels = { index: 0, count: files.length };
+        createMediaPreview(files, 'stories');
+        createMediaPreview(files, 'reels');
+    });
 
+    // ===== Update Functions =====
     function updatePlacementView() {
-        const buttons = placementSelector.querySelectorAll('.placement-btn');
-        buttons.forEach(btn => {
-            if (btn.dataset.placement === currentPlacement) {
-                btn.classList.remove('bg-gray-200', 'text-gray-700');
-                btn.classList.add('bg-blue-500', 'text-white');
-            } else {
-                btn.classList.remove('bg-blue-500', 'text-white');
-                btn.classList.add('bg-gray-200', 'text-gray-700');
-            }
+        placementSelector.querySelectorAll('.placement-btn').forEach(btn => {
+            const isSelected = btn.dataset.placement === currentPlacement;
+            btn.classList.toggle('bg-blue-500', isSelected);
+            btn.classList.toggle('text-white', isSelected);
+            btn.classList.toggle('bg-gray-200', !isSelected);
+            btn.classList.toggle('text-gray-700', !isSelected);
         });
 
-        if (currentPlacement === 'feed') {
-            feedPreview.classList.remove('hidden');
-            storiesPreview.classList.add('hidden');
-            captionSection.style.display = 'block';
-            aspectRatioSection.style.display = 'block';
-        } else {
-            feedPreview.classList.add('hidden');
-            storiesPreview.classList.remove('hidden');
-            captionSection.style.display = 'none';
-            aspectRatioSection.style.display = 'none';
+        for (const key in previewContainers) {
+            previewContainers[key].classList.toggle('hidden', key !== currentPlacement);
+        }
+
+        const showCaption = currentPlacement === 'feed' || currentPlacement === 'reels';
+        captionSection.style.display = showCaption ? 'block' : 'none';
+    }
+
+    function updateProfilePics(imageUrl) {
+        profilePicPreview.src = imageUrl;
+        document.querySelectorAll('#feed-profile-pic, #stories-profile-pic, #reels-profile-pic').forEach(el => el.src = imageUrl);
+    }
+
+    function updateUsername(newUsername) {
+        const name = newUsername || 'cms';
+        document.querySelectorAll('#feed-username, #stories-username, #reels-username, #feed-caption-username').forEach(el => el.textContent = name);
+    }
+
+    function updateCaption(newCaption) {
+        const cleanCaption = newCaption.replace(/\n/g, '<br>');
+        const feedCaptionEl = document.getElementById('feed-caption');
+        if(feedCaptionEl) {
+            const span = feedCaptionEl.querySelector('span');
+            if (span) span.innerHTML = cleanCaption;
+        }
+        const reelsCaptionEl = document.querySelector('.reels-caption-text');
+        if(reelsCaptionEl) {
+            reelsCaptionEl.textContent = newCaption.split('\n')[0];
         }
     }
 
-    function createMediaPreview(files, wrapper, placement) {
-        wrapper.innerHTML = ''; // Clear previous content
+    function createMediaPreview(files, placement) {
+        const wrapper = document.getElementById(`${placement}-media-wrapper`);
+        if (!wrapper) return;
+        wrapper.innerHTML = '';
 
         if (files.length === 0) {
             wrapper.innerHTML = `<div class="w-full h-full flex justify-center items-center"><p class="${placement === 'feed' ? 'text-gray-500' : 'text-white'}">バナーをアップロード</p></div>`;
@@ -385,10 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             reader.readAsDataURL(files[0]);
         } else {
-            // Create Carousel
             const carouselContainer = document.createElement('div');
             carouselContainer.className = 'carousel-container h-full';
-
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -403,14 +488,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.readAsDataURL(file);
             });
             wrapper.appendChild(carouselContainer);
-            
-            // Add navigation
             addCarouselControls(wrapper, placement);
+            createProgressBar(files.length, placement);
         }
+    }
+
+    function updateGridPreviews(files) {
+        ['explore', 'search'].forEach(placement => {
+            const adSlot = document.getElementById(`${placement}-ad-slot`);
+            if (!adSlot) return;
+            
+            adSlot.innerHTML = '';
+            if (files.length === 0) {
+                adSlot.innerHTML = `<div class="w-full h-full flex justify-center items-center"><p class="text-gray-500 text-xs text-center">広告<br>スロット</p></div>`;
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'w-full h-full object-cover';
+                adSlot.appendChild(img);
+                if (files.length > 1) {
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-clone carousel-icon';
+                    adSlot.appendChild(icon);
+                }
+            };
+            reader.readAsDataURL(files[0]);
+        });
     }
     
     function addCarouselControls(wrapper, placement) {
-        // Arrows
         const prevArrow = document.createElement('div');
         prevArrow.className = 'nav-arrow prev';
         prevArrow.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
@@ -420,22 +530,17 @@ document.addEventListener('DOMContentLoaded', () => {
         nextArrow.className = 'nav-arrow next';
         nextArrow.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
         nextArrow.addEventListener('click', () => moveCarousel(1, placement));
-
         wrapper.appendChild(prevArrow);
         wrapper.appendChild(nextArrow);
 
-        // Dots (only for feed)
         if (placement === 'feed') {
             const dotsContainer = document.createElement('div');
             dotsContainer.className = 'dots-container';
             for (let i = 0; i < carouselState[placement].count; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                dotsContainer.appendChild(dot);
+                dotsContainer.appendChild(document.createElement('div')).className = 'dot';
             }
             wrapper.appendChild(dotsContainer);
         }
-        
         updateCarouselUI(placement);
     }
 
@@ -447,13 +552,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCarouselUI(placement) {
         const state = carouselState[placement];
-        const wrapper = placement === 'feed' ? feedMediaWrapper : storiesMediaWrapper;
+        const wrapper = document.getElementById(`${placement}-media-wrapper`);
+        if (!wrapper) return;
         const carouselContainer = wrapper.querySelector('.carousel-container');
         if (!carouselContainer) return;
         
         carouselContainer.style.transform = `translateX(-${state.index * 100}%)`;
 
-        // Update arrows
         const prevArrow = wrapper.querySelector('.nav-arrow.prev');
         const nextArrow = wrapper.querySelector('.nav-arrow.next');
         if (prevArrow && nextArrow) {
@@ -461,39 +566,37 @@ document.addEventListener('DOMContentLoaded', () => {
             nextArrow.classList.toggle('hidden', state.index === state.count - 1);
         }
         
-        // Update dots (feed)
         if (placement === 'feed') {
-            const dots = wrapper.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === state.index);
-            });
+            wrapper.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === state.index));
         }
         
-        // Update progress bar (stories)
-        if (placement === 'stories') {
-            const segments = storiesProgressBar.querySelectorAll('.progress-segment');
-            segments.forEach((seg, i) => {
-                seg.classList.toggle('active', i === state.index);
-            });
+        if (placement === 'stories' || placement === 'reels') {
+            const progressBar = document.getElementById(`${placement}-progress-bar`);
+            if(progressBar) progressBar.querySelectorAll('.progress-segment').forEach((seg, i) => seg.classList.toggle('active', i === state.index));
         }
     }
     
-    function createStoriesProgressBar(count) {
-        storiesProgressBar.innerHTML = '';
+    function createProgressBar(count, placement) {
+        if (placement !== 'stories' && placement !== 'reels') return;
+        const progressBar = document.getElementById(`${placement}-progress-bar`);
+        if (!progressBar) return;
+
+        progressBar.innerHTML = '';
         if (count > 1) {
             for (let i = 0; i < count; i++) {
                 const segment = document.createElement('div');
                 segment.className = 'progress-segment';
-                storiesProgressBar.appendChild(segment);
+                if (i === 0) segment.classList.add('active');
+                progressBar.appendChild(segment);
             }
-            updateCarouselUI('stories');
         }
     }
 
-    // Initial call to set default values
-    usernameInput.dispatchEvent(new Event('input'));
-    captionInput.dispatchEvent(new Event('input'));
-    updatePlacementView();
+    // Initial setup
+    initializePreviews();
+    updateProfilePics(profilePicPreview.src);
+    updateUsername(usernameInput.value);
+    updateCaption(captionInput.value);
 });
 </script>
 
